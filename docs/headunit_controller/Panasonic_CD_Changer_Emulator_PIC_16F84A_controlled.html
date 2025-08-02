@@ -1,0 +1,196 @@
+<html><link type="text/css" id="dark-mode" rel="stylesheet" href=""><style type="text/css" id="dark-mode-custom-style"></style><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Panasonic CD Changer Emulator - PIC 16F84A controlled</title>
+
+<style type="text/css">
+.quote {
+	border: 1px solid #cccccc;
+	background-color: #eeeeee;
+	padding: 10px;
+}
+
+pre {
+	font-family: "Courier New";
+	border: 1px solid #cccccc;
+	background-color: #eeeeee;
+	padding: 10px;
+}	
+
+</style>
+<style>:is([id*='google_ads_iframe'],[id*='taboola-'],.taboolaHeight,.taboola-placeholder,#top-ad,#credential_picker_container,#credentials-picker-container,#credential_picker_iframe,[id*='google-one-tap-iframe'],#google-one-tap-popup-container,.google-one-tap__module,.google-one-tap-modal-div,#amp_floatingAdDiv,#ez-content-blocker-container) {display:none!important;min-height:0!important;height:0!important;}</style></head>
+
+<body>
+<h1>Panasonic car stereo CD Changer Emulator circuit</h1>
+
+<h2>How to make your own</h2>
+<p>
+
+So I've been making a Panasonic CD Changer Emulator the last few weeks. 
+The hardest part was to get the pinout for the DIN on the back of the 
+head unit. Finally I got found a guy in the UK who had the pinout:
+</p>
+
+<pre>Pin 1 = CD-C data line. (you need to transfer the bytes on this line)
+Pin 2 = CD-C clock	(you need to keep a 8uS clock signal on this line 4us on 4us off)
+Pin 3 = Acc		(not required for comms) Note to self: Supply voltage (12V unreg)
+Pin 4 = CD-C strobe	(you need to send a 4us pulse after the first byte and last byte of packets)
+Pin 5 = RM Data		(this line has data back from the head unit)
+Pin 6 = Acc		(not required for comms) Note to self: Supply voltage (12V unreg)
+Pin 7 = NC		(not connected)
+Pin 8 = GND		(you require a common ground to head unit)
+</pre>
+
+<p>
+With this information I got SO much closer - couldn't have done it 
+without it. But I also found very relevant info on 
+http://www-user.tu-chemnitz.de/~harn/mp3_cdc.htm - but sadly enough the 
+page was offline when I needed it. Google's cache saved my day:
+</p>
+<div class="quote">
+<h3 align="center">Panasonic</h3>
+<p>The protocol panasonic uses is of the serial sync. type. There is one data 
+line, a clock line and a sync line the <b style="COLOR: black; BACKGROUND-COLOR: #a0ffff">changer</b> uses to send data to 
+the radio.<br>The radio to <b style="COLOR: black; BACKGROUND-COLOR: #a0ffff">changer</b> communication is 
+done by some signals known from standard IR remote controls (without a carrier) 
+using one dataline.<br>This remote control <b style="COLOR: black; BACKGROUND-COLOR: #ff9999">signal</b> is pulse width 
+modulated,the dataline is active high.<br>After an initail high(9ms) low(4.5ms) 
+there follows a 32 bit sequence with a 0 encoded as 550us high,550us low and a 1 
+as 550us high,1.7ms low.<br>If the low pulse in the init phase is only 2.25ms 
+long it is just a <b style="COLOR: black; BACKGROUND-COLOR: #ff9999">signal</b> 
+
+send periodical when a key is hold down and there are no data bits.<br>The data 
+is transfered lsb first, the 1st byte is 0xFF-0th byte and the 3rd byte is 
+0xFE-2nd byte.The 2nd byte is the command.</p>
+<p>The <b style="COLOR: black; BACKGROUND-COLOR: #a0ffff">changer</b> to radio 
+communication transfers the data in bytes msb first, the data is valid at the 
+falling clock edge and a low pulse of one half clock period is sent after the 
+first and the last byte of the transfer on the sync line..The clock period is 
+arround 8us.</p>
+<p>There was only one packet containing state, time, disc and track 
+information.</p>
+<table width="75%" border="1">
+  <tbody>
+  <tr>
+    <td width="10%" height="2">Byte</td>
+
+    <td width="11%" height="2">0</td>
+    <td width="21%" height="2">1</td>
+    <td width="10%" height="2">2</td>
+    <td width="7%" height="2">3</td>
+    <td width="7%" height="2">4</td>
+    <td width="9%" height="2">5</td>
+
+    <td width="10%" height="2">6</td>
+    <td width="10%" height="2">7</td></tr>
+  <tr>
+    <td width="10%">Info</td>
+    <td width="11%">&nbsp;</td>
+    <td width="21%">disc(b0-b3)</td>
+    <td width="10%">track</td>
+
+    <td width="7%">min</td>
+    <td width="7%">sec</td>
+    <td width="9%">state</td>
+    <td width="10%">&nbsp;</td>
+    <td width="10%">&nbsp;</td></tr>
+  <tr>
+    <td width="10%">Data</td>
+
+    <td width="11%">0xCB</td>
+    <td width="21%">0x42</td>
+    <td width="10%">0x09</td>
+    <td width="7%">0x02</td>
+    <td width="7%">0x56</td>
+    <td width="9%">0x00</td>
+
+    <td width="10%">0x30</td>
+    <td width="10%">0xC3</td></tr></tbody></table>
+<p>state:</p>
+<table width="75%" border="1">
+  <tbody>
+  <tr>
+    <td>Value</td>
+    <td>0x00</td>
+
+    <td>0x10</td>
+    <td>0x20</td>
+    <td>0x04</td>
+    <td>0x08</td></tr>
+  <tr>
+    <td>Info</td>
+
+    <td>normal</td>
+    <td>scan</td>
+    <td>random</td>
+    <td>random</td>
+    <td>repeat</td></tr></tbody></table>
+<p>&nbsp;</p>
+</div>
+
+<p>For the inputs to be enabled, the head unit must think there's a Panasonic-made CD-changer connected. 
+</p>
+
+<p>Now, I had the information I needed. The only thing left was coding it up.</p>
+
+<p>To summarize the current PIC firmware capabilities:</p>
+
+<ul>
+<li> RS232 communication in 57600bps with RTS/CTS flow control, half duplex</li>
+<li>Panasonic CDC Emulation</li>
+   <ul>
+
+     <li>Head Unit Display Update</li>
+     <li>Recognizes key presses (normal and repetitive) on the head unit and
+forwards them through RS232 to DTE</li>
+     <li>Very simple protocol enables Head Unit Display update through RS232</li>
+   </ul>
+</ul>
+
+<p>Runs on a PIC16F84A @ 20MHz
+</p>
+
+<p><b>Connections to Head unit as follows:</b></p>
+
+<pre>PIC16F84A Pin  1 RA2 -&gt; DIN8C Pin 2 SCLK to Head Unit
+PIC16F84A Pin  2 RA3 -&gt; DIN8C Pin 1 STX  to Head Unit
+PIC16F84A Pin 18 RA1 -&gt; DIN8C Pin 4 SYNC to Head Unit
+PIC16F84A Pin  6 RB0 &lt;- DIN8C Pin 5 RM to Head Unit
+</pre>
+
+<p>
+<b>RS232 bitrate and format: </b>
+</p><pre>57600bps, 8n1</pre>
+<p></p>
+<b>Table describes a 9 pin DSUB connector (female, same applies to male)</b><br>
+<pre>Short DB9F Pin 4 	&lt;&gt; 	DB9F Pin 6  (to make DSR follow DTR)
+PIC TX out 	RB1 	-&gt; 	DB9F Pin 2, RXD
+PIC RX in	RB2  	&lt;- 	DB9F Pin 3, TXD
+PIC RTS in	RB3  	&lt;- 	DB9F Pin 7, RTS
+PIC CTS out	RB4  	-&gt; 	DB9F Pin 8, CTS
+
+</pre>
+
+<h2>Files and source</h2>
+<p>And then, of course, the source code for the CDCEmu v3 (old)
+It's written in relocatable assembler using MPLAB 6.x
+</p>
+
+<ul>
+<li><a href="https://q1.se/cdcemu/cdcemu.asm"><b>cdcemu</b>.asm</a></li>
+<li><a href="https://q1.se/cdcemu/obj_delay_20MHz.asm">obj_delay_20MHz.asm</a></li>
+<li><a href="https://q1.se/cdcemu/obj_rs232.asm">obj_rs232.asm</a></li>
+</ul>
+
+<p>Here's an Arduino implementation kindly provided by Steve Hennerley in January, 2017:</p>
+<ul>
+<li><a href="https://q1.se/cdcemu/arduino.txt"><b>arduino.txt</b></a></li>
+</ul>
+
+
+<h2>Contact</h2>
+Kristoffer Sjöberg<br>
+<span style="color: blue">kristoffer.sjoberg at galeno.se</span>
+
+
+
+<protonpass-root-c7e0 data-protonpass-role="root" data-protonpass-theme="os"></protonpass-root-c7e0></body></html>
