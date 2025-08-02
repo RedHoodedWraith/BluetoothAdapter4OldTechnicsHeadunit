@@ -30,3 +30,75 @@ Packet containing state, time, disc and track information to send to the headuni
 | Value |	0x00 | 0x10 | 0x20 | 0x04 | 0x08 |
 | ----- | ---- | ---- | ---- | ---- | ---- |
 | Info | normal | scan | random | random | repeat |
+
+## Remote Control Data
+Code from [cdcemy.asm](example_code/cdcemu/cdcemu.asm) that shows the remote control data received from the head unit.
+Refer to the [PIC Instruction Set](pic_instruction_set.pdf) document for the assembly instruction set definitions below.
+
+``` Assembly
+TranslateRM
+	movwf	RM_tempbyte
+
+	movlw	0x54	; track <
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'<'
+
+	movlw	0x58	; track >
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'>'
+
+	movlw	0x60	; Disc Down
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'P'	; 'P'revious
+
+	movlw	0x70	; Disc Up
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'N'	; 'N'ext
+
+	movlw	0x48	; Random
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'R'	; 'R'andom
+
+	movlw	0x40	; OFF
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'0'	; Turn off scanning and random
+
+
+	movlw	0x2C	; Scan
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'S'	; 'S'can
+
+	movlw	0x52	; Scan (OFF)
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	's'	; 'S'can
+
+
+	movlw	0x64	; repeat
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'r'	; 'r'epeat
+
+
+	movlw	0x1c	; Init
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'I'	; 'I'n
+
+	movlw	0x14	; ON
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'O'	; 'O'n
+
+	movlw	0x20	; Off (ping)
+	subwf	RM_tempbyte,W
+	btfsc	STATUS,Z
+	retlw	'o'	; 'o'ff
+```
