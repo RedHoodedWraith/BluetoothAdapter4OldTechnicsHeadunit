@@ -5,6 +5,8 @@ The purpose of the emulator is to be able to control the playback of Bluetooth a
 
 This part of the project is based on the information and code examples provided by Kristoffer Sjöberg and Steve Hennerley. See [Panasonic_CD_Changer_Emulator_Info.md](Panasonic_CD_Changer_Emulator_Info.md) and the example [Arduino code](cd_changer_emulator.txt) for more information. These resources are provided as a redundancy should the original site be offline.
 
+The reason why information on a Panasonic CD Changer emulator is used is because Technics is owned by Panasonic since 1965 and all the CD Changers pictured with this headunit on the internet seem to be Panasonic branded.
+
 ## The DIN Connector Mapping
 ```
 Pin 1 = CD-C data line. (you need to transfer the bytes on this line)
