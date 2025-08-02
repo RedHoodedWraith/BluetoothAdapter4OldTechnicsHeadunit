@@ -1,6 +1,6 @@
 # Panasonic car stereo CD Changer Emulator circuit
 ## Introduction
-The following is written by Kristoffer Sjöberg which can be found on [Kristoffer's site](https://q1.se/cdcemu/details.php). It was converted into a markup document by myself Asami De Almeida on the 2nd of August 2025 to make document referencing easier and reliable during development.
+The following is written by Kristoffer Sjöberg which can be found on [Kristoffer's site](https://q1.se/cdcemu/details.php). It was converted into a markup document by myself, Asami De Almeida, on the 2nd of August 2025 to make document referencing easier and reliable during development.
 
 ## How to make your own
 
