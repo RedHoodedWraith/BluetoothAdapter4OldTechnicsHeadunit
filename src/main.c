@@ -7,7 +7,7 @@
 // Using VSPI on ESP32 (and what it maps to on the DIN plug)
 #define SCK_PIN 18  // DIN Pin 2 - Clock
 #define MOSI_PIN 23 // DIN Pin 1 - Data
-#define MISO_PIN 19 // DIN Pin 5 - Remote Control Data
+// #define MISO_PIN 19 // DIN Pin 5 - Remote Control Data
 #define CS_PIN 5    // DIN Pin 4 - Strobe
 
 // dispData - 0xCB, <disc>, <track>, <min>, <sec>, <state>, <unknown>, 0xc3, (additional zero bytes for padding between packets)
