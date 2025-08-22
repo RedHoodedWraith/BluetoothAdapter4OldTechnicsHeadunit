@@ -34,3 +34,5 @@ This project is designed to be used with the PlatformIO framework for uploading 
 * [Basic Panasonic CQ-FX55LEN (and similar) CD Changer emulator for Arduino](https://q1.se/cdcemu/arduino.txt) by Steve Hennerley
 * [Espressif | Bluetooth® A2DP API](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/bluetooth/esp_a2dp.html)
 * [Espressif | HFP Client API](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/bluetooth/esp_hf_client.html)
+* [ESP32 A2DP](https://github.com/pschatzmann/ESP32-A2DP) by Phil Schatzmann
+* [Arduino Audio Tools](https://github.com/pschatzmann/arduino-audio-tools) by Phil Schatzmann
